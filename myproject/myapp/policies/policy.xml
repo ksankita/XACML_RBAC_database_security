@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+    PolicyId="access_policy"
+    RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides">
+    
+    <Target/>
+    
+    <!-- Rule for managers: Can access from anywhere at any time -->
+    <Rule RuleId="manager-anytime-anywhere" Effect="Permit">
+        <Condition>
+           <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+    <AttributeDesignator AttributeId="role" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">manager</AttributeValue>
+</Apply>
+
+        </Condition>
+    </Rule>
+
+    <!-- Rule for employees: Can access only from the office during 9 AM - 5 PM -->
+    <Rule RuleId="employee-office-hours" Effect="Permit">
+        <Condition>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                <AttributeDesignator AttributeId="role" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">employee</AttributeValue>
+            </Apply>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                <AttributeDesignator AttributeId="location" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">office</AttributeValue>
+            </Apply>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:greater-than-or-equal">
+                <AttributeDesignator AttributeId="access_time" DataType="http://www.w3.org/2001/XMLSchema#integer"/>
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">9</AttributeValue>
+            </Apply>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:less-than-or-equal">
+                <AttributeDesignator AttributeId="access_time" DataType="http://www.w3.org/2001/XMLSchema#integer"/>
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">17</AttributeValue>
+            </Apply>
+        </Condition>
+    </Rule>
+
+    <!-- Default deny rule -->
+    <Rule RuleId="deny-all" Effect="Deny"/>
+</Policy>
